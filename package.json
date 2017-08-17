@@ -1,0 +1,23 @@
+{
+  "name": "statsbrain",
+  "version": "0.1.0",
+  "description": "Brain of it",
+  "main": "server.js",
+  "repository": "https://github.com/nlnwa/maalfrid/statsbrain",
+  "author": "Marius Elsfjordstrand Beck",
+  "license": "Apache-2.0",
+  "scripts": {
+    "start": "node server.js",
+    "devstart": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.15.4",
+    "grpc": "^1.4.1",
+    "morgan": "^1.8.2",
+    "rethinkdbdash": "^2.3.31"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
