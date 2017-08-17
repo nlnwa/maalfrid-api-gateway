@@ -1,3 +1,8 @@
+const RETHINK_HOST = process.env.RETHINK_HOST || 'localhost';
+const RETHINK_PORT = process.env.RETHINK_PORT || 50051;
+const RETHINK_DB = process.env.RETHINK_DB || 'broprox';
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'localhost';
+
 module.exports = {
     rethinkdb: {
         host: RETHINK_HOST,
