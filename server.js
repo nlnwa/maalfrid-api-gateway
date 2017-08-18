@@ -22,4 +22,4 @@ app.use('/api', api);
 app.use(fourofour);
 app.use(error);
 
-app.listen(PORT, HOST, () => console.log(`Statsbrain server started ${HOST}:${PORT}`));
+app.listen(PORT, HOST, () => console.log(`Sprett running on ${HOST}:${PORT}`));
