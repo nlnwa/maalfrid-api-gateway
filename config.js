@@ -5,9 +5,9 @@ module.exports = {
         proto_path: 'api/maalfrid.proto'
     },
     rethinkdb: {
-        host: process.env.RETHINK_HOST || 'localhost',
-        port: process.env.RETHINK_PORT || 28015,
-        db: process.env.RETHINK_DB || 'broprox'
+        host: process.env.DB_HOST || 'localhost',
+        port: process.env.DB_PORT || 28015,
+        db: process.env.DB_NAME || 'broprox'
     },
     express: {
         host: "0.0.0.0",
