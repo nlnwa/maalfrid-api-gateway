@@ -1,11 +1,11 @@
 'use strict';
 
+const config = require('../config');
 const grpc = require('grpc');
-const PROTO_PATH = 'api/maalfrid.proto';
-const api = grpc.load(PROTO_PATH).maalfrid;
-const GRPC_MAALFRID = process.env.GRPC_MAALFRID || 'localhost:50051';
+const api = grpc.load(config.sproett.proto_path).maalfrid;
+const address = config.sproett.host + ":" + config.sproett.port;
 
-var maalfrid = new api.Maalfrid(GRPC_MAALFRID, grpc.credentials.createInsecure());
+var maalfrid = new api.Maalfrid(address, grpc.credentials.createInsecure());
 
 exports.detectLanguage = (text) => {
     return new Promise((resolve, reject) => {

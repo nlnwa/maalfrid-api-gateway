@@ -11,11 +11,11 @@ RUN npm install --production && npm cache clean
 
 COPY . /usr/src/app
 
-ENV PROTO_PATH api/maalfrid.proto
-ENV GRPC_MAALFRID host:port
+ENV SPROETT_SERVICE_HOST host
+ENV SPROETT_SERVICE_PORT port
 ENV RETHINK_PORT port
 ENV RETHINK_HOST host
-ENV RETHINK_DB db
+ENV RETHINK_DB name
 ENV CORS_ORIGIN *
 
 EXPOSE 3002

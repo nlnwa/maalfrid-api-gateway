@@ -1,20 +1,20 @@
-const RETHINK_HOST = process.env.RETHINK_HOST || 'localhost';
-const RETHINK_PORT = process.env.RETHINK_PORT || 50051;
-const RETHINK_DB = process.env.RETHINK_DB || 'broprox';
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'localhost';
-
 module.exports = {
+    sproett: {
+        host: process.env.SPROETT_SERVICE_HOST || 'localhost',
+        port: process.env.SPROETT_SERVICE_PORT || 50051,
+        proto_path: 'api/maalfrid.proto'
+    },
     rethinkdb: {
-        host: RETHINK_HOST,
-        port: RETHINK_PORT,
-        db: RETHINK_DB
+        host: process.env.RETHINK_HOST || 'localhost',
+        port: process.env.RETHINK_PORT || 28015,
+        db: process.env.RETHINK_DB || 'broprox'
     },
     express: {
         host: "0.0.0.0",
         port: 3002
     },
     corsOptions: {
-        origin: CORS_ORIGIN,
+        origin: process.env.CORS_ORIGIN || '*',
         optionsSuccessStatus: 200
     }
 };
