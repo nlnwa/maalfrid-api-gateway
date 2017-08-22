@@ -1,18 +1,16 @@
-'use strict';
-
 const express = require('express');
-var config = require('./config');
-var cors = require('cors');
-var logger = require('morgan');
-var api = require('./routes/api');
-var index = require('./routes/index');
-var fourofour = require('./lib/404');
-var error = require('./lib/error');
+const config = require('./config');
+const cors = require('cors');
+const logger = require('morgan');
+const api = require('./routes/api');
+const index = require('./routes/index');
+const fourofour = require('./lib/404');
+const error = require('./lib/error');
 
 const HOST = process.env.HOST || config.express.host;
 const PORT = process.env.PORT || config.express.port;
 
-var app = express();
+const app = express();
 
 // middleware chain
 app.use(cors(config.corsOptions));

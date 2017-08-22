@@ -1,4 +1,7 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = new express.Router();
 
-module.exports = router.get('/', (req, res) => res.status(200).send('/api/stats/:uri/:lix?/:wc?'));
+module.exports =
+  router.get('/',
+             (req, res) => res.status(200).send('/api/stats/:uri/:lix?/:wc?'));
+

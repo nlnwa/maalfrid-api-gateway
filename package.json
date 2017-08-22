@@ -1,6 +1,6 @@
 {
-  "name": "statsbrain",
-  "version": "0.1.0",
+  "name": "sprett",
+  "version": "0.0.1",
   "description": "Brain of it",
   "main": "server.js",
   "repository": "https://github.com/nlnwa/maalfrid/statsbrain",
@@ -8,7 +8,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "node server.js",
-    "devstart": "nodemon server.js"
+    "devstart": "nodemon server.js",
+    "lint": "eslint ."
   },
   "dependencies": {
     "cors": "^2.8.4",
@@ -18,6 +19,9 @@
     "rethinkdbdash": "^2.3.31"
   },
   "devDependencies": {
+    "eslint": "^4.5.0",
+    "eslint-config-es2015": "^1.1.0",
+    "eslint-config-google": "^0.9.1",
     "nodemon": "^1.11.0"
   }
 }
