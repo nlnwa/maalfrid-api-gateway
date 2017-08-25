@@ -11,33 +11,38 @@ function getHostName(url) {
   }
 }
 
-function getFromDatabase(query) {
-  const uri = query.url || '';
-  const hostname = getHostName(query.url);
-  const lix = parseInt(query.lix) || 0;
-  const wc = parseInt(query.wc) || 0;
-  const sc = parseInt(query.sc) || 0;
-  const cc = parseInt(query.cc) || 0;
-  const lwc = parseInt(query.lwc) || 0;
+function getQExtractedText(params) {
+  const uri = params.url || '';
+  const hostname = getHostName(uri);
 
   return r.table('crawl_log')
     .filter((crawl) =>
             crawl('requestedUri').match(`^${uri}`)
             .or(crawl('referrer').match(`^${hostname}`))
            )
-    .eqJoin('warcId', r.table('extracted_text'))
+    .eqJoin('warcId', r.table('extracted_text'));
+}
+
+
+function getQStats(params) {
+  const lix = parseInt(params.lix) || 0;
+  const wc = parseInt(params.wc) || 0;
+  const sc = parseInt(params.sc) || 0;
+  const cc = parseInt(params.cc) || 0;
+  const lwc = parseInt(params.lwc) || 0;
+
+  return getQExtractedText(params)
     .getField('right')
     .filter(
       r.row('wordCount').gt(wc)
         .and(r.row('lix').gt(lix))
         .and(r.row('characterCount').gt(cc))
         .and(r.row('longWordCount').gt(lwc))
-        .and(r.row('sentenceCount').gt(sc)))
-    .run();
+        .and(r.row('sentenceCount').gt(sc)));
 }
 
 exports.stats = (req, res) => {
-  getFromDatabase(req.query)
+  getQStats(req.query).run()
     .then((extracts) => Promise.all(extracts.map((data) => maalfrid.detectLanguage(data.text))))
     .then((codes) => {
       const total = codes.length;
@@ -54,5 +59,28 @@ exports.stats = (req, res) => {
         total,
         count,
       });
-    }).catch((err) => console.error(err));
+    }).catch((err) => res.send(500));
+};
+
+exports.language = (req, res) => {
+  let tmp; 
+  const code = req.query.code || '';
+  getQExtractedText(req.query).run()
+    .then((extracts) => {
+      tmp = extracts;
+      return Promise.all(extracts.map((data) => maalfrid.detectLanguage(data.right.text)));
+    }).then((codes) => {
+      const result = [];
+      codes.forEach((value, index) => {
+        if (value == code.toUpperCase()) {
+          if (tmp[index].left.requestedUri) {
+            result.push(tmp[index].left.requestedUri);
+          } else {
+            result.push(tmp[index].left.referrer);
+          }
+        }
+      });
+      res.json(result);
+    })
+    .catch((err) => res.status(500).send(err.message));
 };
