@@ -1,15 +1,24 @@
 const maalfrid = require('../service/maalfrid');
 const config = require('../config');
 const r = require('rethinkdbdash')(config.rethinkdb);
-const url = require('url');
+
+function getHostName(url) {
+  const parts = url.split('/');
+  if (parts.length < 4) {
+    return url;
+  } else {
+    return parts[0] + '/' + parts[1] + '/' + parts[2] + '/';
+  }
+}
 
 function getFromDatabase(query) {
-  const uri = query.url;
-  const hostname = url.parse(uri).hostname; 
+  const uri = query.url || '';
+  const hostname = getHostName(query.url);
   const lix = parseInt(query.lix) || 0;
   const wc = parseInt(query.wc) || 0;
-
-  console.log(`uri ${uri} :: lix ${lix} :: wc ${wc}`);
+  const sc = parseInt(query.sc) || 0;
+  const cc = parseInt(query.cc) || 0;
+  const lwc = parseInt(query.lwc) || 0;
 
   return r.table('crawl_log')
     .filter((crawl) =>
@@ -18,33 +27,32 @@ function getFromDatabase(query) {
            )
     .eqJoin('warcId', r.table('extracted_text'))
     .getField('right')
-    .filter(r.row('wordCount').gt(wc).and(r.row('lix').gt(lix)))
-    .getField('text')
+    .filter(
+      r.row('wordCount').gt(wc)
+        .and(r.row('lix').gt(lix))
+        .and(r.row('characterCount').gt(cc))
+        .and(r.row('longWordCount').gt(lwc))
+        .and(r.row('sentenceCount').gt(sc)))
     .run();
 }
 
 exports.stats = (req, res) => {
   getFromDatabase(req.query)
-    .then((data) =>
-          Promise.all(data.map((text) => maalfrid.detectLanguage(text)))
-          .then((codes) => {
-            let total = codes.length;
-            let unique = {};
+    .then((extracts) => Promise.all(extracts.map((data) => maalfrid.detectLanguage(data.text))))
+    .then((codes) => {
+      const total = codes.length;
+      let count = {};
+      codes.map((value) => {
+        if (!(value in count)) {
+          count[value] = 1;
+        } else {
+          count[value] += 1;
+        }
+      });
 
-            codes.map((value) => {
-              if (!(value in unique)) {
-                unique[value] = 1;
-              } else {
-                unique[value] += 1;
-              }
-            });
-
-            let result = [];
-            for (const key of Object.keys(unique)) {
-              let entry = {};
-              entry[key] = unique[key] / total;
-              result.push( entry );
-            }
-            res.json(result);
-          }).catch((err) => console.error("ERROR" + err)));
+      res.json({
+        total,
+        count,
+      });
+    }).catch((err) => console.error(err));
 };

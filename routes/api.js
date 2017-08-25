@@ -5,6 +5,7 @@ const api = require('../controllers/api');
 router.get('/stats', api.stats);
 
 router.get('/',
-           (req, res) => res.status(200).send('/api/stats/:uri/:lix?/:wc?'));
+           (req, res) => res.status(200)
+           .send('/api/stats?url=&wc=&lix=&cc=&lwc=&sc'));
 
 module.exports = router;
