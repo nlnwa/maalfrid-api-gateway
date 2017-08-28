@@ -2,13 +2,14 @@ const config = require('../config');
 const grpc = require('grpc');
 const api = grpc.load(config.sproett.proto_path).maalfrid;
 
-const poolSize = require('os').cpus().length;
 const pool = [];
+const poolSize = config.sproett.poolSize;
 for (let i = 0; i < poolSize; i++) {
   const address = config.sproett.host + ':' + (config.sproett.port + i);
   pool.push(new api.Maalfrid(address, grpc.credentials.createInsecure()));
 }
 let current = 0;
+
 function getService() {
   const service = pool[current];
   current += 1;

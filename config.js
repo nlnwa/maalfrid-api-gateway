@@ -3,6 +3,7 @@ module.exports = {
     host: process.env.SPROETT_SERVICE_HOST || 'localhost',
     port: process.env.SPROETT_SERVICE_PORT || 50051,
     proto_path: 'api/maalfrid.proto',
+    poolSize: require('os').cpus().length,
   },
   rethinkdb: {
     host: process.env.DB_HOST || 'localhost',
