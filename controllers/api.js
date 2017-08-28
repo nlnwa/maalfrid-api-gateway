@@ -59,7 +59,7 @@ exports.stats = (req, res) => {
         total,
         count,
       });
-    }).catch((err) => res.send(500));
+    }).catch((err) => res.sendStatus(500));
 };
 
 exports.language = (req, res) => {
