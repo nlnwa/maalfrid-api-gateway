@@ -11,8 +11,8 @@ RUN npm install --production && npm cache clean
 
 COPY . /usr/src/app
 
-ENV SPROETT_SERVICE_HOST host
-ENV SPROETT_SERVICE_PORT port
+ENV SPROETT_HOST host
+ENV SPROETT_PORT port
 ENV DB_PORT port
 ENV DB_HOST host
 ENV DB_NAME name
