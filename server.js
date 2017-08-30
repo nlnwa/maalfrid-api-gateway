@@ -4,7 +4,6 @@ const config = require('./config');
 const cors = require('cors');
 const logger = require('morgan');
 const api = require('./routes/api');
-const index = require('./routes/index');
 const fourofour = require('./lib/404');
 const error = require('./lib/error');
 
@@ -16,7 +15,6 @@ const app = express();
 // middleware chain
 app.use(cors(config.corsOptions));
 app.use(logger('dev'));
-app.use('/', index);
 app.use('/api', api);
 app.use(fourofour);
 app.use(error);
