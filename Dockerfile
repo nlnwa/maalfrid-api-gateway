@@ -3,8 +3,8 @@ FROM node:boron-slim
 RUN mkdir -p /usr/src/app/api
 WORKDIR /usr/src/app
 
-COPY package.json /usr/src/app
-RUN npm install --production && npm cache clean
+COPY package.json yarn.lock /usr/src/app
+RUN yarn install --production && yarn cache clean
 
 COPY . /usr/src/app
 
