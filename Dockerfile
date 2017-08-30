@@ -8,13 +8,13 @@ RUN npm install --production && npm cache clean
 
 COPY . /usr/src/app
 
-ENV SPROETT_HOST host
-ENV SPROETT_PORT port
-ENV SPROETT_POOL_SIZE 1
-ENV DB_PORT port
-ENV DB_HOST host
-ENV DB_NAME name
-ENV CORS_ORIGIN *
+ENV SPROETT_HOST host \
+    SPROETT_PORT port \
+    SPROETT_POOL_SIZE 1 \
+    DB_PORT port \
+    DB_HOST host \
+    DB_NAME name \
+    CORS_ORIGIN *
 
 EXPOSE 3002
 
