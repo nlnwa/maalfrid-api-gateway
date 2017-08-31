@@ -3,7 +3,7 @@ FROM node:boron-slim
 RUN mkdir -p /usr/src/app/api
 WORKDIR /usr/src/app
 
-COPY package.json yarn.lock /usr/src/app
+COPY package.json yarn.lock /usr/src/app/
 RUN yarn install --production && yarn cache clean
 
 COPY . /usr/src/app
