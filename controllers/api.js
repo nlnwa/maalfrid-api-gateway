@@ -17,9 +17,9 @@ function getQExtractedText(params) {
 
   return r.table('crawl_log')
     .filter((crawl) =>
-            crawl('requestedUri').match(`^${uri}`)
-            .or(crawl('referrer').match(`^${hostname}`))
-           )
+      crawl('requestedUri').match(`^${uri}`)
+        .or(crawl('referrer').match(`^${hostname}`))
+    )
     .eqJoin('warcId', r.table('extracted_text'));
 }
 
@@ -41,9 +41,52 @@ function getQStats(params) {
         .and(r.row('sentenceCount').gt(sc)));
 }
 
+exports.thats = (req, res) => {
+  /*  Promise.all([
+      // need language
+      getQStats(req.query)
+        .filter(r.row('language'), {default: true}).run(),
+
+      // got language
+      getQStats(req.query)
+        .filter(r.row('language')).run(),
+    ])*/
+  let needLanguage;
+
+  getQStats(req.query)
+    .filter(r.row('language'), {default: true}).run()
+    .then((results) => {
+      needLanguage = results;
+      return Promise.all(
+        results.map((data) => maalfrid.detectLanguage(data.text))
+      );
+    })
+    .then((codes) => {
+      let updates = {};
+      needLanguage.forEach((element, index) => {
+        updates[element.warcId] = {language: codes[index]};
+      });
+      return updates;
+    })
+    .then((updates) => {
+      const idsToUpdate = Object.keys(updates);
+      return r.table('extracted_text')
+        .getAll(r.args(idsToUpdate))
+        .update((subject) => {
+          return r.expr(updates).do((upd) => upd(subject('warcId')));
+          }
+        )
+        .run();
+    })
+    .then((u) => res.json(u));
+}
+;
+
 exports.stats = (req, res) => {
   getQStats(req.query).run()
-    .then((extracts) => Promise.all(extracts.map((data) => maalfrid.detectLanguage(data.text))))
+    .then((extracts) => Promise.all(
+      extracts.map((data) => maalfrid.detectLanguage(data.text))
+    ))
     .then((codes) => {
       const total = codes.length;
       let count = {};
@@ -63,13 +106,16 @@ exports.stats = (req, res) => {
 };
 
 exports.language = (req, res) => {
-  let tmp; 
+  let tmp;
   const code = req.query.code || '';
   getQExtractedText(req.query).run()
     .then((extracts) => {
       tmp = extracts;
-      return Promise.all(extracts.map((data) => maalfrid.detectLanguage(data.right.text)));
-    }).then((codes) => {
+      return Promise.all(
+        extracts.map((data) => maalfrid.detectLanguage(data.right.text))
+      );
+    })
+    .then((codes) => {
       const result = [];
       codes.forEach((value, index) => {
         if (value == code.toUpperCase()) {

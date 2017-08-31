@@ -4,6 +4,7 @@ const api = require('../controllers/api');
 
 router.get('/stats/', api.stats);
 router.get('/language', api.language);
+router.get('/thats', api.thats);
 
 router.get('/',
            (req, res) => res.status(200)
