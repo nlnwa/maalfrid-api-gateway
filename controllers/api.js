@@ -11,82 +11,98 @@ function getHostName(url) {
   }
 }
 
-function getQExtractedText(params) {
-  const uri = params.url || '';
+function qFilterCrawlLog(args) {
+  const uri = args.url || '';
   const hostname = getHostName(uri);
 
   return r.table('crawl_log')
     .filter((crawl) =>
-      crawl('requestedUri').match(`^${uri}`)
-        .or(crawl('referrer').match(`^${hostname}`))
-    )
-    .eqJoin('warcId', r.table('extracted_text'));
+            crawl('requestedUri').match(`^${uri}`)
+            .or(crawl('referrer').match(`^${hostname}`))
+           );
 }
 
+function qFilterExtractedText(query, args) {
+  const lix = parseInt(args.lix) || 0;
+  const wc = parseInt(args.wc) || 0;
+  const sc = parseInt(args.sc) || 0;
+  const cc = parseInt(args.cc) || 0;
+  const lwc = parseInt(args.lwc) || 0;
 
-function getQStats(params) {
-  const lix = parseInt(params.lix) || 0;
-  const wc = parseInt(params.wc) || 0;
-  const sc = parseInt(params.sc) || 0;
-  const cc = parseInt(params.cc) || 0;
-  const lwc = parseInt(params.lwc) || 0;
-
-  return getQExtractedText(params)
-    .getField('right')
-    .filter(
-      r.row('wordCount').gt(wc)
-        .and(r.row('lix').gt(lix))
-        .and(r.row('characterCount').gt(cc))
-        .and(r.row('longWordCount').gt(lwc))
-        .and(r.row('sentenceCount').gt(sc)));
+  return query.filter(
+    r.row('wordCount').gt(wc)
+      .and(r.row('lix').gt(lix))
+      .and(r.row('characterCount').gt(cc))
+      .and(r.row('longWordCount').gt(lwc))
+      .and(r.row('sentenceCount').gt(sc)));
 }
 
-exports.thats = (req, res) => {
-  /*  Promise.all([
-      // need language
-      getQStats(req.query)
-        .filter(r.row('language'), {default: true}).run(),
+function qJoinExtractedText(query) {
+  return query.eqJoin('warcId', r.table('extracted_text'));
+}
 
-      // got language
-      getQStats(req.query)
-        .filter(r.row('language')).run(),
-    ])*/
-  let needLanguage;
+function qFilteredExtractedTextWithUriOrReferrer(args) {
+  return qFilterExtractedText(
+    qJoinExtractedText(qFilterCrawlLog(args)).getField('right'),
+    args
+  );
+}
 
-  getQStats(req.query)
-    .filter(r.row('language'), {default: true}).run()
-    .then((results) => {
-      needLanguage = results;
+function updateLanguageCodes(updates) {
+  const rUpdates = r.expr(updates);
+  return r.table('extracted_text')
+    .getAll(r.args(Object.keys(updates)))
+    .update((extractedText) => rUpdates(extractedText('warcId')))
+    .run();
+}
+
+function getFilteredExtractedTextsWithUriOrReferrer(args) {
+  return qFilteredExtractedTextWithUriOrReferrer(args)
+    .run();
+}
+
+function getLanguageCodes(args) {
+  return qFilterExtractedText(
+    qJoinExtractedText(qFilterCrawlLog(args)).getField('right'), args)
+    .getField('language')
+    .coerceTo('array')
+    .run();
+}
+
+function getReferrerOrUriWithLanguageCode(args) {
+  let code = args.code || '';
+  code = code.toUpperCase();
+
+  return qJoinExtractedText(qFilterCrawlLog(args))
+    .filter((m) => m('right')('language').match(code))
+    .pluck({'left': ['referrer', 'requestedUri'], 'right': ['language']})
+    .map((v) => v('left').merge(v('right')))
+    .run();
+}
+
+// POST /api/detect
+function detect(req, res) {
+  let subjects;
+  getFilteredExtractedTextsWithUriOrReferrer(req.body)
+    .then((result) => {
+      subjects = result;
       return Promise.all(
-        results.map((data) => maalfrid.detectLanguage(data.text))
+        result.map((data) => maalfrid.detectLanguage(data.text))
       );
     })
-    .then((codes) => {
+    .then((languageCodes) => {
       let updates = {};
-      needLanguage.forEach((element, index) => {
-        updates[element.warcId] = {language: codes[index]};
+      subjects.forEach((subject, index) => {
+        updates[subject.warcId] = {language: languageCodes[index]};
       });
       return updates;
     })
-    .then((updates) => {
-      const idsToUpdate = Object.keys(updates);
-      return r.table('extracted_text')
-        .getAll(r.args(idsToUpdate))
-        .update((subject) => {
-          return r.expr(updates).do((upd) => upd(subject('warcId')));
-          }
-        )
-        .run();
-    })
+    .then((updates) => updateLanguageCodes(updates))
     .then((u) => res.json(u));
 }
-;
 
-exports.stats = (req, res) => {
-  getQStats(req.query).run()
-    .then((extracts) => Promise.all(
-      extracts.map((data) => maalfrid.detectLanguage(data.text))
-    ))
+function stats(req, res) {
+  getLanguageCodes(req.query)
     .then((codes) => {
       const total = codes.length;
       let count = {};
@@ -103,30 +119,26 @@ exports.stats = (req, res) => {
         count,
       });
     }).catch((err) => res.status(500).send(err.message));
-};
+}
 
-exports.language = (req, res) => {
-  let tmp;
-  const code = req.query.code || '';
-  getQExtractedText(req.query).run()
-    .then((extracts) => {
-      tmp = extracts;
-      return Promise.all(
-        extracts.map((data) => maalfrid.detectLanguage(data.right.text))
-      );
-    })
-    .then((codes) => {
-      const result = [];
-      codes.forEach((value, index) => {
-        if (value == code.toUpperCase()) {
-          if (tmp[index].left.requestedUri) {
-            result.push(tmp[index].left.requestedUri);
+function language(req, res) {
+  getReferrerOrUriWithLanguageCode(req.query)
+    .then((result) => {
+      const response = [];
+      result.forEach((value) => {
+           if (value.requestedUri) {
+            response.push(value.requestedUri);
           } else {
-            result.push(tmp[index].left.referrer);
+            response.push(value.referrer);
           }
-        }
       });
-      res.json(result);
+      res.json(response);
     })
     .catch((err) => res.status(500).send(err.message));
+}
+
+module.exports = {
+  stats,
+  language,
+  detect,
 };

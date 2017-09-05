@@ -1,10 +1,11 @@
 const express = require('express');
 const router = new express.Router();
 const api = require('../controllers/api');
+const bodyParser = require('body-parser');
 
 router.get('/stats/', api.stats);
 router.get('/language', api.language);
-router.get('/thats', api.thats);
+router.post('/detect', bodyParser.json(), api.detect);
 
 router.get('/',
            (req, res) => res.status(200)
