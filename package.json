@@ -1,29 +1,31 @@
 {
-  "name": "sprett",
-  "version": "0.0.1",
-  "description": "Brain of it",
-  "main": "server.js",
-  "repository": "https://github.com/nlnwa/maalfrid/statsbrain",
-  "author": "Marius Elsfjordstrand Beck",
+  "name": "maalfrid-api-gateway",
+  "version": "1.0.0alpha1",
   "license": "Apache-2.0",
+  "description": "Målfrid API gateway",
+  "main": "index.js",
+  "repository": "https://github.com/nlnwa/maalfrid-api-gateway",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "devstart": "nodemon server.js",
+    "start": "node .",
     "lint": "eslint ."
   },
   "dependencies": {
-    "body-parser": "^1.17.2",
-    "cors": "^2.8.4",
-    "dotenv": "^4.0.0",
-    "express": "^4.15.4",
+    "@koa/cors": "^2.2.1",
+    "axios": "^0.16.2",
     "grpc": "^1.4.1",
-    "morgan": "^1.8.2",
+    "koa": "^2.3.0",
+    "koa-json-body": "^5.3.0",
+    "koa-json-error": "^3.1.2",
+    "koa-mount": "^3.0.0",
+    "koa-route": "^3.2.0",
+    "moment": "^2.19.1",
     "rethinkdbdash": "^2.3.31"
   },
   "devDependencies": {
+    "dotenv": "^4.0.0",
     "eslint": "^4.5.0",
     "eslint-config-es2015": "^1.1.0",
-    "eslint-config-google": "^0.9.1",
-    "nodemon": "^1.11.0"
+    "eslint-config-google": "^0.9.1"
   }
 }
