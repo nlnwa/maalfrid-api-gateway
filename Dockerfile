@@ -13,7 +13,9 @@ ENV MAALFRID_HOST=host \
     MAALFRID_POOL_SIZE=1 \
     DB_PORT=port \
     DB_HOST=host \
-    DB_NAME=name
+    DB_NAME=name \
+    NODE_ENV=development \
+    LOG_LEVEL=info
 
 EXPOSE 3002
 
