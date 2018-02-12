@@ -24,7 +24,6 @@
     "rethinkdbdash": "^2.3.31"
   },
   "devDependencies": {
-    "dotenv": "^4.0.0",
     "eslint": "^4.17.0",
     "eslint-config-es2015": "^1.1.0",
     "eslint-config-google": "^0.9.1"
