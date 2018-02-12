@@ -1,0 +1,3 @@
+[submodule "maalfrid"]
+	path = maalfrid
+	url = https://github.com/nlnwa/maalfrid
