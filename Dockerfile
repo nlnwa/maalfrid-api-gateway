@@ -10,7 +10,6 @@ COPY . /usr/src/app
 
 ENV MAALFRID_HOST=host \
     MAALFRID_PORT=port \
-    MAALFRID_POOL_SIZE=1 \
     DB_PORT=port \
     DB_HOST=host \
     DB_NAME=name \
