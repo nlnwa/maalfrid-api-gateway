@@ -1,3 +1,0 @@
-[submodule "api"]
-	path = lib/proto/maalfrid
-	url = https://github.com/nlnwa/maalfrid-api.git
