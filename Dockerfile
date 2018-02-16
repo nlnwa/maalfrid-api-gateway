@@ -1,12 +1,13 @@
-FROM node:slim
+FROM node:8-alpine
 
-RUN mkdir -p /usr/src/app/
-WORKDIR /usr/src/app
+LABEL maintainer="nettarkivet@nb.no"
 
 COPY package.json yarn.lock /usr/src/app/
+WORKDIR /usr/src/app
+
 RUN yarn install --production && yarn cache clean
 
-COPY . /usr/src/app
+COPY . .
 
 ENV MAALFRID_HOST=host \
     MAALFRID_PORT=port \
