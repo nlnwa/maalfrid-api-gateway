@@ -5,7 +5,9 @@ LABEL maintainer="nettarkivet@nb.no"
 COPY package.json yarn.lock /usr/src/app/
 WORKDIR /usr/src/app
 
-RUN yarn install --production && yarn cache clean
+RUN apk add --no-cache libc6-compat \
+&& yarn install --production \
+&& yarn cache clean
 
 COPY . .
 
@@ -19,4 +21,4 @@ ENV MAALFRID_HOST=host \
 
 EXPOSE 3002
 
-CMD [ "node", "index.js" ]
+ENTRYPOINT /usr/local/bin/node index.js
