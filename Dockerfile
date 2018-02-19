@@ -11,14 +11,18 @@ RUN apk add --no-cache libc6-compat \
 
 COPY . .
 
-ENV MAALFRID_HOST=host \
+ENV HOST=0.0.0.0 \
+    PORT=3010 \
+    CORS_ALLOW_ORIGIN=* \
+    PATH_PREFIX=/ \
+    MAALFRID_HOST=host \
     MAALFRID_PORT=port \
     DB_PORT=port \
     DB_HOST=host \
     DB_NAME=name \
-    NODE_ENV=development \
+    NODE_ENV=production \
     LOG_LEVEL=info
 
-EXPOSE 3002
+EXPOSE 3010
 
 ENTRYPOINT /usr/local/bin/node index.js
