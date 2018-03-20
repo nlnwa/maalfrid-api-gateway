@@ -20,6 +20,8 @@ ENV HOST=0.0.0.0 \
     DB_PORT=port \
     DB_HOST=host \
     DB_NAME=name \
+    DB_USER=admin \
+    DB_PASSWORD='' \
     NODE_ENV=production \
     LOG_LEVEL=info
 
