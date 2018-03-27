@@ -27,4 +27,4 @@ ENV HOST=0.0.0.0 \
 
 EXPOSE 3010
 
-ENTRYPOINT /usr/local/bin/node index.js
+ENTRYPOINT ["/usr/local/bin/node", "index.js"]
