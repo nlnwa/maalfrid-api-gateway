@@ -1,0 +1,6 @@
+**
+!maalfrid/api/*.proto
+!package.json
+!yarn.lock
+!lib/
+!index.js

@@ -5,18 +5,26 @@ LABEL maintainer="nettarkivet@nb.no"
 COPY package.json yarn.lock /usr/src/app/
 WORKDIR /usr/src/app
 
-RUN yarn install --production && yarn cache clean
+RUN apk add --no-cache libc6-compat \
+&& yarn install --production \
+&& yarn cache clean
 
 COPY . .
 
-ENV MAALFRID_HOST=host \
+ENV HOST=0.0.0.0 \
+    PORT=3010 \
+    CORS_ALLOW_ORIGIN=* \
+    PATH_PREFIX=/ \
+    MAALFRID_HOST=host \
     MAALFRID_PORT=port \
     DB_PORT=port \
     DB_HOST=host \
     DB_NAME=name \
-    NODE_ENV=development \
+    DB_USER=admin \
+    DB_PASSWORD='' \
+    NODE_ENV=production \
     LOG_LEVEL=info
 
-EXPOSE 3002
+EXPOSE 3010
 
-CMD [ "node", "index.js" ]
+ENTRYPOINT ["/usr/local/bin/node", "index.js"]
