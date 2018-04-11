@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@koa/cors": "^2.2.1",
-    "axios": "^0.18.0",
     "debug": "^3.1.0",
     "grpc": "^1.10.1",
     "koa": "^2.5.0",
@@ -20,7 +19,6 @@
     "koa-json-error": "^3.1.2",
     "koa-mount": "^3.0.0",
     "koa-route": "^3.2.0",
-    "moment": "^2.22.0",
     "rethinkdbdash": "^2.3.31"
   },
   "devDependencies": {
