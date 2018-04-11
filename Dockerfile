@@ -14,11 +14,11 @@ COPY . .
 ENV HOST=0.0.0.0 \
     PORT=3010 \
     CORS_ALLOW_ORIGIN=* \
-    PATH_PREFIX=/ \
-    MAALFRID_HOST=host \
+    PATH_PREFIX=/maalfrid/api \
+    MAALFRID_HOST=localhost \
     MAALFRID_PORT=port \
-    DB_PORT=port \
-    DB_HOST=host \
+    DB_PORT=28015 \
+    DB_HOST=localhost \
     DB_NAME=name \
     DB_USER=admin \
     DB_PASSWORD='' \
