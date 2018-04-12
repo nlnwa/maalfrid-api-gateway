@@ -1,10 +1,10 @@
 {
-  "name": "maalfrid-api-gateway",
-  "version": "1.0.0alpha1",
+  "name": "maalfrid-api",
+  "version": "0.1.0-alpha1",
   "license": "Apache-2.0",
-  "description": "Målfrid API gateway",
+  "description": "Målfrid API",
   "main": "index.js",
-  "repository": "https://github.com/nlnwa/maalfrid-api-gateway",
+  "repository": "https://github.com/nlnwa/maalfrid-api",
   "private": true,
   "scripts": {
     "start": "node .",
