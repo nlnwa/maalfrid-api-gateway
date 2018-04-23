@@ -1,6 +1,6 @@
 {
   "name": "maalfrid-api",
-  "version": "0.1.0-alpha1",
+  "version": "0.1.0-alpha2",
   "license": "Apache-2.0",
   "description": "Målfrid API",
   "main": "index.js",
@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@koa/cors": "^2.2.1",
-    "debug": "^3.1.0",
     "grpc": "^1.10.1",
     "koa": "^2.5.0",
     "koa-json-body": "^5.3.0",
