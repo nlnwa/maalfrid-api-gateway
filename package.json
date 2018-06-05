@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "start": "node .",
-    "lint": "eslint .",
+    "lint": "standard",
     "build:docker": "docker build -t norsknettarkiv/maalfrid-api:latest ."
   },
   "dependencies": {
@@ -19,11 +19,9 @@
     "koa-json-error": "^3.1.2",
     "koa-mount": "^3.0.0",
     "koa-route": "^3.2.0",
-    "rethinkdbdash": "^2.3.31"
+    "rethinkdbdash": "rebirthdb/rebirthdb-js"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-es2015": "^1.1.0",
-    "eslint-config-google": "^0.9.1"
+    "standard": "^11.0.1"
   }
 }
