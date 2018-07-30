@@ -12,6 +12,7 @@
     "build:docker": "docker build -t norsknettarkiv/maalfrid-api:latest ."
   },
   "dependencies": {
+    "@grpc/proto-loader": "^0.3.0",
     "@koa/cors": "^2.2.2",
     "grpc": "^1.13.1",
     "koa": "^2.5.2",
