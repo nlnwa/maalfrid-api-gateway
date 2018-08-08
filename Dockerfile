@@ -5,8 +5,7 @@ LABEL maintainer="nettarkivet@nb.no"
 COPY package.json yarn.lock /usr/src/app/
 WORKDIR /usr/src/app
 
-RUN yarn install --production \
-&& yarn cache clean
+RUN yarn install --production && yarn cache clean
 
 COPY . .
 
