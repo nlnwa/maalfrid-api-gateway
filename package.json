@@ -1,6 +1,6 @@
 {
   "name": "maalfrid-api",
-  "version": "0.1.0-alpha6",
+  "version": "0.1.0-alpha7",
   "license": "Apache-2.0",
   "description": "Målfrid API",
   "main": "index.js",
@@ -18,6 +18,7 @@
     "koa": "^2.5.2",
     "koa-json-body": "^5.3.0",
     "koa-json-error": "^3.1.2",
+    "koa-jwt": "^3.3.2",
     "koa-mount": "^3.0.0",
     "koa-route": "^3.2.0",
     "rethinkdbdash": "rebirthdb/rebirthdb-js"
