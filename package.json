@@ -1,6 +1,6 @@
 {
   "name": "maalfrid-api",
-  "version": "0.1.0-alpha7",
+  "version": "0.1.0-alpha8",
   "license": "Apache-2.0",
   "description": "Målfrid API",
   "main": "index.js",
@@ -9,12 +9,13 @@
   "scripts": {
     "start": "node .",
     "lint": "standard",
-    "build:docker": "docker build -t norsknettarkiv/maalfrid-api:latest ."
+    "build:docker": "docker build -t norsknettarkiv/maalfrid-api:dev ."
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.3.0",
     "@koa/cors": "^2.2.2",
     "grpc": "^1.13.1",
+    "jwk-to-pem": "^2.0.0",
     "koa": "^2.5.2",
     "koa-json-body": "^5.3.0",
     "koa-json-error": "^3.1.2",
