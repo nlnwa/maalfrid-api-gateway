@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node .",
     "lint": "standard",
+    "test": "mocha",
     "build:docker": "docker build -t norsknettarkiv/maalfrid-api:dev ."
   },
   "dependencies": {
@@ -25,6 +26,8 @@
     "rethinkdbdash": "rebirthdb/rebirthdb-js"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
     "standard": "^11.0.1"
   }
 }
