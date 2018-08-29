@@ -3,20 +3,29 @@ const {assert} = require('chai')
 
 const reqlMock = {
   expr: (_) => _,
-  add: (a, b) => new RegExp(a.concat(b))
+  add: (a, b) => new RegExp(a.concat(b)),
+  and: (a, b) => a && b
 }
 
 const {
-  someArrayElementEquals,
-  someArrayElementIsPrefixOf,
+  someInArrayEquals,
+  someInArrayIsPrefixOf,
+  inClosedInterval,
   prefixOf,
   filterFn,
-  fieldFilter,
+  makeFilterPredicate,
   filterToReql
 } = require('../lib/filter')(reqlMock)
 
 const data = require('./filter')
-const selection = require('./filter.data')
+const selection = require('./filter.data').map((doc) =>
+  Object.keys(doc).reduce((acc, key) => {
+    if (Number.isInteger(doc[key])) {
+      doc[key] = Number(doc[key])
+    }
+    return doc
+  }, doc)
+)
 const filters = Object.freeze(data.filter)
 
 describe('spec', () => {
@@ -24,21 +33,39 @@ describe('spec', () => {
 })
 
 describe('lib/filter.js', () => {
-  before('monkeypatch built-ins to emulate reql objects', () => {
+  before('monkeypatch built-ins to emulate reql object functions', () => {
     // eslint-disable-next-line no-extend-native
     Array.prototype.contains = Array.prototype.some
     // eslint-disable-next-line no-extend-native
     String.prototype.eq = function (str) { return this.toString() === str }
     // eslint-disable-next-line no-extend-native
     Object.prototype.getField = function getField (field) { return this[field] }
+    // eslint-disable-next-line no-extend-native
+    Number.prototype.gt = function (number) { return this > number }
+    // eslint-disable-next-line no-extend-native
+    Number.prototype.gte = function (number) { return this >= number }
+    // eslint-disable-next-line no-extend-native
+    Number.prototype.lt = function (number) { return this < number}
+    // eslint-disable-next-line no-extend-native
+    Number.prototype.lte = function (number) { return this <= number }
   })
 
-  describe('reqlMock', () => {
+  describe('spec', () => {
     it('r.add should return regexp of concatenated strings', () => {
       const expected = '/ab'.concat('cd/')
       const actual = reqlMock.add('ab', 'cd').toString()
 
       assert.equal(expected, actual)
+    })
+
+    it('r.expr is the identity function', () => {
+      assert.equal(reqlMock.expr(true), true)
+      assert.deepEqual(reqlMock.expr({1: 2}), {1: 2})
+    })
+
+    it('r.and is the and of two booleans', () => {
+      assert.isTrue(reqlMock.and(true, true))
+      assert.isFalse(reqlMock.and(true, false))
     })
 
     it('getField should be an object method returning named property of object', () => {
@@ -66,46 +93,63 @@ describe('lib/filter.js', () => {
     })
   })
 
-  describe('someArrayElementEquals', () => {
+  describe('someInArrayEquals', () => {
     it('should return a function when given an argument', () => {
-      assert.isFunction(someArrayElementEquals('NNO'))
+      assert.isFunction(someInArrayEquals(['NNO', 'NOB']))
     })
 
     it('returned function should return boolean when given an array argument', () => {
-      assert.isBoolean(someArrayElementEquals('NNO')([1, 2, 3]))
+      assert.isBoolean(someInArrayEquals([1, 2, 3])('NNO'))
     })
 
     it('returned function should throw when given an undefined argument', () => {
-      assert.throws(someArrayElementEquals('NNO'), TypeError)
+      assert.throws(someInArrayEquals([1, 2, 3]), TypeError)
 
       // eslint-disable-next-line no-undef
-      const fn = someArrayElementEquals('SSB').bind(someArrayElementEquals, undefined)
+      const fn = someInArrayEquals(['SSB', 'QAK']).bind(someInArrayEquals, undefined)
       assert.throws(fn, TypeError)
     })
 
     it('returned function should work', () => {
-      const result = someArrayElementEquals('NNO')(['NNO', 1, 2, 3])
+      const result = someInArrayEquals(['NNO', 1, 2, 3])('NNO')
       assert.isTrue(result)
     })
   })
 
-  describe('someArrayElementIsPrefixOf', () => {
+  describe('someInArrayIsPrefixOf', () => {
     it('should return a function when given an argument', () => {
-      const result = someArrayElementIsPrefixOf('NNO')
+      const result = someInArrayIsPrefixOf(['NNO', 'NOB'])
       assert.isFunction(result)
     })
 
     it('returned function should return boolean when argument is any array', () => {
-      const result = someArrayElementIsPrefixOf('NNO')([1, '2', {}])
+      const result = someInArrayIsPrefixOf([1, '2', {}])('NNO')
       assert.isBoolean(result)
     })
 
     it('returned function should throw when argument is undefined', () => {
-      assert.throws(someArrayElementIsPrefixOf('NNO'), TypeError)
+      assert.throws(someInArrayIsPrefixOf(['NOB','NNO']), TypeError)
     })
 
     it('returned function should return true when there is some array element who is a prefix of stored string', () => {
-      const result = someArrayElementIsPrefixOf('NNOBELUGA')(['NNOB', 1, 2, 3])
+      const result = someInArrayIsPrefixOf(['NNOB', 1, 2, 3])('NNOBELUGA')
+      assert.isTrue(result)
+    })
+  })
+
+  describe('inClosedInterval', () => {
+    it('should return a function when given an argument', () => {
+      const result = inClosedInterval([2, 5])
+      assert.isFunction(result)
+    })
+
+    it('returned function should return boolean when argument is any array', () => {
+      const result = inClosedInterval([1, 4])(5)
+      assert.isBoolean(result)
+    })
+
+    it('returned function should return true when number is in given range', () => {
+      const result = inClosedInterval([1, 4])(3)
       assert.isTrue(result)
     })
   })
@@ -116,7 +160,7 @@ describe('lib/filter.js', () => {
       assert.isFunction(fn)
     })
 
-    it('should return a predicateFn resolving true given a non-existent filter', () => {
+    it('should return a predicateFn resolving true given a non-existent filter name', () => {
       const fn = filterFn('barbie')
       assert.isTrue(fn('whatever'))
       assert.isTrue(fn('yo mo'))
@@ -124,16 +168,17 @@ describe('lib/filter.js', () => {
     })
   })
 
-  describe('fieldFilter', () => {
-    it('should return a function when given an argument', () => {
+  describe('makeFilterPredicate', () => {
+    it('should return a function when given arguments', () => {
       const name = 'requestedUri'
-      const fn = fieldFilter(name, filters[name])
+      const filter = filters[name]
+      const fn = makeFilterPredicate(name, filter)
       assert.isFunction(fn)
     })
 
     it('returned function should return boolean when given an array argument', () => {
       const name = 'requestedUri'
-      const predicateFn = fieldFilter(name, filters[name])
+      const predicateFn = makeFilterPredicate(name, filters[name])
       const predicate = predicateFn(selection[0])
       assert.isBoolean(predicate)
     })
