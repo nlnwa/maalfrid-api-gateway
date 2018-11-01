@@ -1,6 +1,6 @@
 FROM node:8-alpine
 
-LABEL maintainer="nettarkivet@nb.no"
+LABEL maintainer="marius.beck@nb.no"
 
 COPY package.json yarn.lock /usr/src/app/
 WORKDIR /usr/src/app
