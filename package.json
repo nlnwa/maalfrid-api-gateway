@@ -1,6 +1,6 @@
 {
   "name": "maalfrid-service",
-  "version": "0.1.0-beta.3",
+  "version": "0.1.0-beta.4",
   "license": "Apache-2.0",
   "description": "Målfrid API",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "start": "node .",
     "lint": "standard",
     "test": "mocha",
-    "build:docker": "docker build -t norsknettarkiv/maalfrid-service:$(git rev-parse --abbrev-ref HEAD) ."
+    "build:docker": "docker build -t norsknettarkiv/maalfrid-service:$(git describe) ."
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.3.0",
