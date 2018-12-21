@@ -10,12 +10,12 @@
     "start": "node .",
     "lint": "standard",
     "test": "mocha",
-    "build:docker": "docker build -t norsknettarkiv/maalfrid-service:$(git describe) ."
+    "build:docker": "docker build -t norsknettarkiv/maalfrid-service:$(git describe --tags --always) ."
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.3.0",
     "@koa/cors": "^2.2.2",
-    "grpc": "^1.16.1",
+    "grpc": "^1.17.0",
     "jwk-to-pem": "^2.0.0",
     "koa": "^2.6.2",
     "koa-json-body": "^5.3.0",
@@ -23,7 +23,7 @@
     "koa-jwt": "^3.3.2",
     "koa-mount": "^3.0.0",
     "koa-route": "^3.2.0",
-    "maalfrid-api": "nlnwa/maalfrid-api",
+    "maalfrid-api": "nlnwa/maalfrid-api#master",
     "rethinkdb-js": "rethinkdb/rethinkdb-js"
   },
   "devDependencies": {
