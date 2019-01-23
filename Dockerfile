@@ -1,13 +1,27 @@
 FROM node:10-alpine
 
-LABEL maintainer="marius.beck@nb.no"
+ARG VCS_REF
+ARG BUILD_DATE
+ARG VERSION
+
+LABEL maintainer="mariusb.beck@nb.no" \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.vendor="National Library of Norway" \
+      org.label-schema.url="https://www.nb.no/" \
+      org.label-schema.version="${VERSION}" \
+      org.label-schema.build-date="${BUILD_DATE}" \
+      org.label-schema.vcs-ref="${VCS_REF}" \
+      org.label-schema.vcs-url="https://github.com/nlnwa/maalfrid-service"
 
 COPY package.json yarn.lock /usr/src/app/
+
 WORKDIR /usr/src/app
 
 RUN yarn install --production && yarn cache clean
 
 COPY . .
+
+RUN sed -i -r 's|"version": ".*"|"version": "'"${VERSION}"'"|' package.json
 
 ENV HOST=0.0.0.0 \
     PORT=3010 \
