@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:current-alpine
 
 LABEL maintainer="mariusb.beck@nb.no"
 
