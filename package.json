@@ -13,9 +13,9 @@
     "build:docker": "VERSION=$(git describe --tags --always); docker build -t norsknettarkiv/maalfrid-service:${VERSION} ."
   },
   "dependencies": {
-    "@grpc/proto-loader": "^0.5.0",
+    "@grpc/proto-loader": "^0.5.1",
     "@koa/cors": "^3.0.0",
-    "grpc": "^1.20.3",
+    "grpc": "^1.21.1",
     "jwk-to-pem": "^2.0.1",
     "koa": "^2.7.0",
     "koa-json-body": "^5.3.0",
