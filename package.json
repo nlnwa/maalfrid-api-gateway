@@ -10,25 +10,25 @@
     "start": "node .",
     "lint": "standard",
     "test": "mocha",
-    "build:docker": "VERSION=$(git describe --tags --always); BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ'); VCS_REF=$(git rev-parse HEAD); docker build --build-arg VERSION=${VERSION} --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} -t norsknettarkiv/maalfrid-service:${VERSION} ."
+    "build:docker": "VERSION=$(git describe --tags --always); docker build -t norsknettarkiv/maalfrid-service:${VERSION} ."
   },
   "dependencies": {
-    "@grpc/proto-loader": "^0.3.0",
-    "@koa/cors": "^2.2.3",
-    "grpc": "^1.17.0",
+    "@grpc/proto-loader": "^0.5.1",
+    "@koa/cors": "^3.0.0",
+    "grpc": "^1.21.1",
     "jwk-to-pem": "^2.0.1",
-    "koa": "^2.6.2",
+    "koa": "^2.7.0",
     "koa-json-body": "^5.3.0",
     "koa-json-error": "^3.1.2",
-    "koa-jwt": "^3.3.2",
-    "koa-mount": "^3.0.0",
+    "koa-jwt": "^3.5.1",
+    "koa-mount": "^4.0.0",
     "koa-route": "^3.2.0",
     "maalfrid-api": "nlnwa/maalfrid-api#master",
-    "rethinkdb-js": "rethinkdb/rethinkdb-js"
+    "rethinkdb-ts": "^2.4.0-rc.13"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.1.4",
     "standard": "^12.0.1"
   }
 }
